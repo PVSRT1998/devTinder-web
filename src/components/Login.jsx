@@ -7,8 +7,11 @@ import { BASE_URL } from '../utils/constants';
 
 const Login = () => {
 
-  const [emailId, setEmailId] = useState('venkatateja@gmail.com');
-  const [password, setPassword] = useState('Venkata@123');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [emailId, setEmailId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoginView, setIsLoginView] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,12 +26,36 @@ const Login = () => {
     }
   }
 
+  const handleSignUp = async () => {
+    try {
+      const signUpPayload = {
+        firstName, lastName, emailId, password
+      }
+      const res = await axios.post(BASE_URL + "/signup", signUpPayload, { withCredentials: true });
+      dispatch(addUser(res.data?.data));
+      navigate("/profile");
+    } catch (err) {
+      console.log("ERROR: " + err);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center my-10">
       <div className="card card-border bg-base-300 w-96">
         <div className="card-body">
           <h2 className="card-title justify-center">Login</h2>
           <div>
+            {!isLoginView &&
+              <div>
+                <fieldset className="fieldset">
+                  <label className="label" htmlFor="firstName">FirstName</label>
+                  <input type="text" id="firstName" className="input" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                </fieldset>
+                <fieldset className="fieldset">
+                  <label className="label" htmlFor="lastName">LastName</label>
+                  <input type="text" id="lastName" className="input" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                </fieldset>
+              </div>}
             <fieldset className="fieldset">
               <label className="label" htmlFor="email">Email ID</label>
               <input type="email" id="email" className="input" placeholder="Email ID" value={emailId} onChange={(e) => setEmailId(e.target.value)} />
@@ -39,7 +66,11 @@ const Login = () => {
             </fieldset>
           </div>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary" onClick={handleLogin}>Login</button>
+            <button className="btn btn-primary" onClick={isLoginView ? handleLogin : handleSignUp}>{isLoginView ? "Login" : "SignUp"}</button>
+          </div>
+          <div className="card-actions justify-center">
+            {!isLoginView && <p>Already have an account? <span className='text-bolder link' onClick={() => setIsLoginView(true)}>Login here!</span></p>}
+            {isLoginView && <p>Don't have an account yet? <span className='text-bolder link' onClick={() => setIsLoginView(false)}>Sign Up</span></p>}
           </div>
         </div>
       </div>
