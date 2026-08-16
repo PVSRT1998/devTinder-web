@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../utils/constants';
 
 const Login = () => {
 
@@ -13,13 +14,11 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
-    // Handle login logic here
-    const res = await axios.post('http://localhost:3001/login', { emailId, password }, {withCredentials: true});
-    console.log(res);
-    dispatch(addUser(res.data.data));
-    navigate("/");
-    navi
-    } catch(err) {
+      // Handle login logic here
+      const res = await axios.post(BASE_URL + '/login', { emailId, password }, { withCredentials: true });
+      dispatch(addUser(res.data.data));
+      navigate("/");
+    } catch (err) {
       console.log("ERROR: " + err.message);
     }
   }
